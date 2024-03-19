@@ -1,0 +1,147 @@
+(Sir de 20 elemente. Sa se genereze 2 siruri: unul cu nr pare si unul cu nr impare)
+
+.model small
+.stack 200h
+.data      
+    SIR_INIT db 98,45,54,65,56,78,87,6,8,5,2,3,9,4,7,1,13,24,26,87
+    nrPARE db 20 DUP(?)
+    nrIMPARE db 20 DUP(?)  
+    ascii db 8 DUP(?)
+.code 
+
+afisare MACRO a
+      mov al, a
+      mov ah,0eh
+      int 10h
+ENDM
+
+main:
+    mov ax,@data
+    mov ds,ax
+    
+    mov cx,20
+    mov si,offset SIR_INIT
+    mov bx,offset nrIMPARE
+    mov di,offset nrPARE   
+  
+et: mov ax,[si]  
+    test ax,1 
+    jz par
+    mov [bx],al
+    inc bx 
+    
+    jmp ett
+    
+    
+par: 
+    mov [di],ax 
+    inc di
+ETT:    inc si
+    loop et
+ mov bh,0
+        mov ah,02
+        mov dh,0
+        mov dl,0 
+        INT 10h 
+        
+        mov cx, 11
+        mov si,offset nrPARE 
+       call ordoneaza
+        mov si,offset nrPARE 
+         mov cH, 11
+    et2:
+        mov al,[si] 
+        
+        call conv 
+         
+        cmp [ascii], 30h
+        jz et3: 
+        afisare [ascii]
+       et3: cmp [ascii+1], 30h
+        jz et4:
+        afisare [ascii+1] 
+        et4: cmp [ascii+2], 30h
+        jz et11:
+        afisare [ascii+2]
+        afisare ' '
+        et11: 
+        inc si 
+        dec cH
+        cmp cH, 0
+        jne et2    
+         
+    mov di,offset nrIMPARE
+    mov ah,02
+    mov dh,3
+    mov dl,0 
+    INT 10h 
+           mov cx, 9
+        mov SI,offset nrIMPARE 
+       call ordoneaza
+        mov Di,offset nrIMPARE 
+         mov cH, 9
+    et1:mov al,[di] 
+          call conv    
+          
+           cmp [ascii], 30h
+        jz et5: 
+        afisare [ascii]
+       et5: cmp [ascii+1], 30h
+        jz et6:
+        afisare [ascii+1] 
+        et6:
+        afisare [ascii+2]
+        afisare ' '
+         
+          inc Di 
+        dec cH
+        cmp cH, 0
+        jne et1   
+       
+       
+  mov ah, 04ch
+  int 10h
+    
+conv:
+            ; mov bx,0
+             xor ah,ah
+             mov cl,10
+             div cl
+             add ah,30h
+             mov [ascii +2], ah
+             xor ah,ah
+             div cl
+             add ah,30h
+             mov [ascii+1], ah
+             add al,30h
+             mov [ascii], al 
+             ret 
+    
+mov ah, 04ch
+int 21h
+ 
+
+ 
+ ordoneaza PROC NEAR 
+    MOV DX, CX
+    DEC DX
+    eto3:
+        mov di, si
+        eto2:
+        mov al, [si]
+        mov bl, [di]
+        cmp al, bl
+        jl eto1
+        mov [di], al
+        mov [si], bl
+        eto1:
+        inc di
+        loop eto2
+        inc si
+        mov cx, dx
+        dec dx
+        cmp dx, 0
+        jnz eto3 
+        ret
+        
+        ordoneaza endp

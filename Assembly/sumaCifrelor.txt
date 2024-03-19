@@ -1,0 +1,80 @@
+(linia de comanda. 'aduna a b c d'. se calculeaza suma cifrelor)
+
+
+
+org 100h
+
+.stack 200h
+.data
+ mesaj db 'A aparit o eroare!', '$'
+  ASCII DB '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', '$'
+.code
+main:
+ mov ax,@data
+ mov ds,ax
+mov bx, 80h
+mov dh, es:[bx]
+mov al, dh
+cmp al,14
+je next
+mesaj_2: mov dx, offset mesaj
+mov ah, 09h
+int 21h
+jmp iesire
+;afisare din PSP
+next:
+ mov bx, 88h 
+check: 
+mov al, es:[bx]
+cmp al, 30h
+ jl mesaj_2
+ cmp es:[bx], 40h
+ ja mesaj_2    
+ inc bx  
+ inc bx
+cmp bx,90h 
+jnz check
+   
+mov bx, 88h
+MOV DH, 0
+afisare: mov al, es:[bx]
+add dh, al 
+sub dh, 30h
+inc bx
+inc bx
+inc ch
+cmp bx, 90h 
+jnz afisare
+mov al, dh
+call convBinAscii
+iesire:mov ax,4c00h
+int 21h
+
+ret
+ 
+convBinAscii proc near
+xor ah,ah
+mov cl,10
+div cl ; studiati modul de lucru al div
+add ah,30h
+mov [ASCII+2],ah ; unitati 
+mov bl, ah
+xor ah,ah
+div cl
+add ah,30h
+mov [ASCII+1],ah ; zeci
+mov cl, ah
+add al,30h
+mov [ASCII],al ; sute
+mov ah, 0eh
+cmp al, 30h
+je et2   
+int 10h
+et2: mov al, cl
+cmp al, 30h
+je et3
+int 10h
+et3:mov al, bl
+int 10h
+ret
+convBinAscii endp

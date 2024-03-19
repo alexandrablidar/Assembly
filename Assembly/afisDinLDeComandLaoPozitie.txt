@@ -1,0 +1,38 @@
+org 100h
+
+; afisare mesaj din linia de comanda (PSP)
+; se face si verificarea liniei de comanda
+.model small
+.stack 200h
+.data
+ mesaj db 'Eroare în linia de comanda!!', '$' 
+ a db 'abcde3','$' 
+.code
+
+ mov ax,@data
+ mov ds,ax
+mov bx, 80h
+mov ch,es:[bx]
+mov al, dh
+mov ah, 02h
+mov dh, 15
+mov dl, 30
+mov bh, 0
+int 10h
+ mov bx, 82h
+ mov ah,0eh
+mov cl,0
+repeta:mov al,es:[bx]
+ mov ah,0eh
+int 10h
+ 
+mov ah, 1
+int 16h
+cmp al, 0Dh
+je iesire 
+jnz next
+next:  inc bx
+inc cl
+cmp cl,ch 
+jnz repeta
+iesire:

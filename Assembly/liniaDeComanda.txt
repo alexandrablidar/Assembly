@@ -1,0 +1,43 @@
+(Linia de comanda,max 20 caractere. 
+afisare in ordine inversa,linia 6,coloana 5)
+
+
+
+org 100h
+
+.model small
+.stack 200h
+.data
+ mesaj db 'Eroare in linia de comanda!', '$'
+.code
+main:
+ mov ax,@data
+ mov ds,ax
+mov bx, 80h
+mov dh,es:[bx]
+mov al, dh
+cmp al,21
+jng next
+mov dx, offset mesaj
+mov ah, 09h
+int 21h
+jmp iesire
+;afisare din PSP
+next:
+mov ah, 02h
+mov dh, 6
+mov dl, 5
+int 10h
+ mov bx, 80h
+ mov ah, 00h
+add bx, ax
+ mov ah,0eh
+mov ch,0
+repeta:mov al,es:[bx]
+ 
+int 10h
+  dec bx
+cmp bx,81h 
+jnz repeta
+iesire:mov ax,4c00h
+int 21h

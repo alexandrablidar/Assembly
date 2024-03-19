@@ -1,0 +1,103 @@
+(2 siruri de 10 elemente. Se afiseaza pe linia 6,coloana 7 nr de elem comune. 
+Afisare elem comune pe verticala)
+
+
+.model small
+.stack 200h
+.data
+sir_1 db   '1', '2', '3', '4', '5', '6', '8', '9', '0', '7'
+sir_2 db   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'q' 
+
+sir12 db 10 dup(?)
+.code
+  
+     mov ax, @data
+     mov ds, ax
+     
+           
+           
+    mov si,offset sir_1
+    
+    mov bx,offset sir12
+    mov cx, 10 
+    mov dh, 10
+    mov dl, 0
+   et3:
+   mov di,offset sir_2
+    mov al, [si]
+   et4: mov ah, [di]
+    cmp al, ah
+    jne et1
+    mov [bx], al
+    inc bx 
+    inc dl
+    jmp et2
+    et1:inc di
+    loop et4
+    et2: inc si
+    mov cx, 10
+    dec dh
+    cmp dh, 0
+    jnz et3
+    mov al, dl
+    mov ch, al
+    cmp al, 10
+    jl et5
+    
+    mov al, 31h
+    mov cl, 30h  
+    mov ah, 02h
+    mov dh, 6
+    mov dl, 7
+    mov bh, 0
+    int 10h
+     mov ah, 0eh
+     int 10h
+     mov al, cl
+     int 10h
+    jmp iesire 
+    et5: add al, 30h
+    mov ah, 02h
+    mov dh, 6
+    mov dl, 7
+    mov bh, 0
+    int 10h
+     mov ah, 0eh
+     int 10h 
+    iesire:  
+    
+    cmp ch, 0
+    je iesire_2
+    mov bx,offset sir12
+    mov dh, 0
+   afisare:  mov ah, 02h
+    
+    mov dl, 3
+    mov bh, 0
+    int 10h
+    mov al, [bx]
+    mov ah, 0eh
+    int 10h
+    inc dh
+    inc bx
+    cmp dh, ch
+    jnz afisare
+    
+    mov bx,offset sir12
+     
+    mov cl, ch
+    mov ch, 0
+   comp: mov al, [bx]
+    cmp al, 'a'
+    jne et6
+    mov dl, 1
+    jmp iesire_2 
+    et6: 
+    inc bx
+    loop comp
+    mov dl, 0
+    iesire_2:
+    
+    mov ah, 04ch
+    int 21h 
+    end code

@@ -1,0 +1,37 @@
+(Sir de 8 cifre. Afiseaza sir doar cu cifre impare)
+
+
+org 100h
+
+ data:
+ SIR_INIT db 12, 1, 33, 45, 88, 73, 19, 20 
+ IMPAR db 8 dup(?)
+
+
+  code: 
+  mov ax, @data
+  mov ds, ax  
+  
+ mov si, 0
+ mov si, offset SIR_INIT
+ mov di, offset IMPAR
+ sub di, si 
+ mov cx, di 
+  mov si, offset SIR_INIT
+ mov di, offset IMPAR
+ repeta: 
+ 
+ mov al, [si]
+ test ax, 1
+ je par
+ mov [di], al 
+ inc di
+ par:
+ dec cx 
+ inc si
+ cmp cx, 0
+ jnz repeta  
+ mov ah, 4ch
+ int 21h
+ 
+ret
